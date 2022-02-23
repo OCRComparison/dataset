@@ -7,6 +7,14 @@ from tqdm import tqdm
 
 def load_funsd(data_path, split='train'):
     
+    if(split=='train'):
+        data_path = os.path.join(data_path, 'training_data')
+    elif(split=='test'):
+        data_path = os.path.join(data_path, 'testing_data')
+    else:
+        raise Exception('invalid split')
+    
+
     if(os.path.exists(data_path)==False):
         raise Exception('dataset not found')
     
@@ -40,7 +48,7 @@ def load_funsd(data_path, split='train'):
             print('Error reading file:', annotation_file, e)
     return(instances)
 
-def save_extracted(data, data_path):
+def save_extracted(instances, data_path):
     
     annotations_path = os.path.join(data_path, 'annotations')
     images_path = os.path.join(data_path, 'images')
@@ -52,7 +60,7 @@ def save_extracted(data, data_path):
     else:
         raise Exception('Output directory:', data_path, 'already exists')
 
-    for instance in tqdm(data):
+    for instance in tqdm(instances):
         
         annotation_file = os.path.join(annotations_path, instance['filename'] + '.txt')
         image_file = os.path.join(images_path, instance['filename'] + '.png')
@@ -85,17 +93,15 @@ if(__name__=='__main__'):
         raise Exception('Output directory:', output_path, 'already exists')
 
 
-    input_path_train = os.path.join(input_path, 'training_data/')
-    input_path_test  = os.path.join(input_path, 'testing_data/')
 
     output_path_train = os.path.join(output_path, 'training_data/')
     output_path_test  = os.path.join(output_path, 'testing_data/')
 
 
-    data_train = load_funsd(input_path_train, split='train')
-    data_test  = load_funsd(input_path_test, split='test')
+    instances_train = load_funsd(input_path, split='train')
+    instances_test  = load_funsd(input_path, split='test')
 
 
     
-    save_extracted(data_train, output_path_train)
-    save_extracted(data_test, output_path_test)
+    save_extracted(instances_train, output_path_train)
+    save_extracted(instances_test, output_path_test)
