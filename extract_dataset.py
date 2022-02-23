@@ -80,12 +80,12 @@ def save_extracted(instances, data_path):
 
 if(__name__=='__main__'):
     parser = argparse.ArgumentParser(description='Process FUNSD dataset to extract the images and annotations')
-    parser.add_argument('input_path', type=str, help='Path of FUNSD')
-    parser.add_argument('output_data_path', type=str, help='Path of the output')
+    parser.add_argument('--input_path', type=str, required=True, help='Path of FUNSD')
+    parser.add_argument('--output_path', type=str, required=True, help='Path of the output')
     args = parser.parse_args()
 
     input_path = args.input_path
-    output_path = args.output_data_path
+    output_path = args.output_path
 
     if(os.path.exists(output_path)==False):
         os.mkdir(output_path)

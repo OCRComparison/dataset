@@ -19,5 +19,5 @@ unzip dataset.zip -d ./FUNSD/
 ### Extraction of the dataset for the OCR comparison
 
 ```
-python extract_dataset.py ./FUNSD/ ./OCRDataset/
+python extract_dataset.py --input_path ./FUNSD/dataset/ --output_path ./OCRDataset/
 ```
