@@ -87,21 +87,22 @@ if(__name__=='__main__'):
     input_path = args.input_path
     output_path = args.output_path
 
-    if(os.path.exists(output_path)==False):
-        os.mkdir(output_path)
-    else:
-        raise Exception('Output directory:', output_path, 'already exists')
 
 
 
-    output_path_train = os.path.join(output_path, 'training_data/')
-    output_path_test  = os.path.join(output_path, 'testing_data/')
+
+    output_path_train = os.path.join(output_path, 'training_data')
+    output_path_test  = os.path.join(output_path, 'testing_data')
 
 
     instances_train = load_funsd(input_path, split='train')
     instances_test  = load_funsd(input_path, split='test')
 
 
+    if(os.path.exists(output_path)==False):
+        os.mkdir(output_path)
+    else:
+        raise Exception('Output directory:', output_path, 'already exists')
     
     save_extracted(instances_train, output_path_train)
     save_extracted(instances_test, output_path_test)
