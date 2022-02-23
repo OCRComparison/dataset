@@ -7,26 +7,22 @@ from tqdm import tqdm
 
 def load_funsd(data_path, split='train'):
     
-    if(split=='train'):
-        data_path = data_path + 'training_data'
-    elif(split=='test'):
-        data_path = data_path + 'testing_data'
-    else:
-        raise Exception('invalid split')
-    
     if(os.path.exists(data_path)==False):
         raise Exception('dataset not found')
     
-    
     instances = []
     
-    annotation_files = os.listdir(data_path+'/annotations/')
-    for annotation_file in annotation_files:
-        image_file = data_path+'/images/'+annotation_file.replace('.json','.png')
+    annotations_path = os.path.join(data_path, 'annotations')
+    images_path = os.path.join(data_path, 'images')
+
+    for annotation_file in os.listdir(annotations_path):
+        
+        image_file = os.path.join(images_path, annotation_file.replace('.json','.png'))
+
         with Image.open(image_file) as image:
             image = np.array(image)
         try:
-            annotation = json.load(open(data_path+'/annotations/'+annotation_file, encoding='utf-8'))
+            annotation = json.load(open(os.path.join(annotations_path, annotation_file), encoding='utf-8'))
             form = annotation['form']
             for idx in range(len(form)):
                 element = form[idx]
@@ -44,21 +40,27 @@ def load_funsd(data_path, split='train'):
             print('Error reading file:', annotation_file, e)
     return(instances)
 
-def save_extracted(data, output_data_path):
+def save_extracted(data, data_path):
+    
+    annotations_path = os.path.join(data_path, 'annotations')
+    images_path = os.path.join(data_path, 'images')
 
-    if(os.path.exists(output_data_path)==False):
-        os.mkdir(output_data_path)
-        os.mkdir(output_data_path+'images/')
-        os.mkdir(output_data_path+'annotations/')
+    if(os.path.exists(data_path)==False):
+        os.mkdir(data_path)
+        os.mkdir(images_path)
+        os.mkdir(annotations_path)
     else:
-        raise Exception('Output directory:', output_data_path, 'already exists')
+        raise Exception('Output directory:', data_path, 'already exists')
 
     for instance in tqdm(data):
-        annotation_file = output_data_path+'annotations/'+ instance['filename'] + '.txt'
-        image_file = output_data_path+'images/'+ instance['filename'] + '.png'
+        
+        annotation_file = os.path.join(annotations_path, instance['filename'] + '.txt')
+        image_file = os.path.join(images_path, instance['filename'] + '.png')
+
         image = Image.fromarray(instance['image'])
-        image.save(image_file)
         text = instance['text']
+        
+        image.save(image_file)
         f = open(annotation_file, 'w', encoding='utf-8')
         f.write(text)
         f.close()
@@ -70,25 +72,30 @@ def save_extracted(data, output_data_path):
 
 if(__name__=='__main__'):
     parser = argparse.ArgumentParser(description='Process FUNSD dataset to extract the images and annotations')
-    parser.add_argument('input_data_path', type=str, help='Path of FUNSD')
+    parser.add_argument('input_path', type=str, help='Path of FUNSD')
     parser.add_argument('output_data_path', type=str, help='Path of the output')
     args = parser.parse_args()
 
-    input_data_path = args.input_data_path
-    output_data_path = args.output_data_path
+    input_path = args.input_path
+    output_path = args.output_data_path
 
-    train_output_data_path = os.path.join(output_data_path, 'training_data/')
-    test_output_data_path  = os.path.join(output_data_path, 'testing_data/')
-
-
-
-    train_data = load_funsd(data_path=input_data_path, split='train')
-    test_data  = load_funsd(data_path=input_data_path, split='test')
-
-    if(os.path.exists(output_data_path)==False):
-        os.mkdir(output_data_path)
+    if(os.path.exists(output_path)==False):
+        os.mkdir(output_path)
     else:
-        raise Exception('Output directory:', output_data_path, 'already exists')
+        raise Exception('Output directory:', output_path, 'already exists')
+
+
+    input_path_train = os.path.join(input_path, 'training_data/')
+    input_path_test  = os.path.join(input_path, 'testing_data/')
+
+    output_path_train = os.path.join(output_path, 'training_data/')
+    output_path_test  = os.path.join(output_path, 'testing_data/')
+
+
+    data_train = load_funsd(input_path_train, split='train')
+    data_test  = load_funsd(input_path_test, split='test')
+
+
     
-    save_extracted(train_data, train_output_data_path)
-    save_extracted(test_data, test_output_data_path)
+    save_extracted(data_train, output_path_train)
+    save_extracted(data_test, output_path_test)
