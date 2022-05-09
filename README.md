@@ -8,6 +8,7 @@ This is the code to download the FUNSD dataset and extract the dataset used for 
 
 ```
 git clone https://github.com/OCRComparison/dataset.git
+cd dataset
 ```
 
 ### Download FUNSD Dataset
