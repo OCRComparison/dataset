@@ -4,6 +4,12 @@ https://ricciuti-federico.medium.com/how-to-compare-ocr-tools-tesseract-ocr-vs-a
 
 This is the code to download the FUNSD dataset and extract the dataset used for the OCR comparison.
 
+### Clone the repository
+
+```
+git clone https://github.com/OCRComparison/dataset.git
+```
+
 ### Download FUNSD Dataset
 
 ```
